@@ -1,5 +1,7 @@
 # Bend DB
 
+**[Open the learning website](https://bend-db-learning-20261025.mossy-sloth-6666.chatgpt.site)** — private; sign in with your ChatGPT account.
+
 A database built to understand databases, Bend 2, and proofs. Learning is the
 primary goal. We are working through small runnable stages alongside
 *Designing Data-Intensive Applications*, second edition.

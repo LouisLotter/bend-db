@@ -1,5 +1,12 @@
 # The learning website
 
+**[Open the hosted learning notebook](https://bend-db-learning-20261025.mossy-sloth-6666.chatgpt.site)**
+
+Published privately on 2026-10-25 (version 1). Access is restricted to the
+owner; the site uses the normal ChatGPT sign-in flow. Local preview needs no
+sign-in. The hosting service confirmed successful deployment; authenticated
+hosted-page inspection remains pending account-selection approval.
+
 A dependency-free static site with a lesson, an interactive explorer, a proof
 walkthrough, a versioned design log and journal, and a personal browser notebook.
 
