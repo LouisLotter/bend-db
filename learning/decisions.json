@@ -1,0 +1,101 @@
+[
+  {
+    "id": "001",
+    "title": "Keep the first database in memory",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "We need to understand operation semantics before crash recovery.",
+    "choice": "Use a scripted, sequential in-memory store.",
+    "alternatives": "Start with files, a network server, or a storage engine.",
+    "consequences": "Every process starts fresh. No durability or concurrency claims.",
+    "question": "What would have to survive a power failure?"
+  },
+  {
+    "id": "002",
+    "title": "Store a newest-first history",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "Overwrites should be visible as a simple sequence of state changes.",
+    "choice": "Prepend each write to a linked history; the first matching key wins.",
+    "alternatives": "Update an entry in place, use a hash table, or keep a sorted tree.",
+    "consequences": "Writes add one node; reads may compare every historical entry. Old versions consume space.",
+    "question": "After a million writes to one key, how many visible keys and history entries remain?"
+  },
+  {
+    "id": "003",
+    "title": "Give absence its own representation",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "An empty string is a valid value.",
+    "choice": "Use Maybe: Some{value} for present, None{} for missing.",
+    "alternatives": "Reserve an empty string or another special string as a sentinel.",
+    "consequences": "Callers must handle two cases. No valid string is taken away.",
+    "question": "How can get distinguish a stored empty string from a missing key?"
+  },
+  {
+    "id": "004",
+    "title": "Delete with a tombstone",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "Older writes remain in the history.",
+    "choice": "Prepend an entry with None{} and stop at the first matching key.",
+    "alternatives": "Remove only the newest matching node, or remove every matching node.",
+    "consequences": "A key becomes logically absent while its old history remains physically present.",
+    "question": "Why would removing only the newest write resurrect an older value?"
+  },
+  {
+    "id": "005",
+    "title": "Use Nat keys and text values",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "The first equality proof should be small enough to follow.",
+    "choice": "Use natural-number keys and String values.",
+    "alternatives": "Use text keys or arbitrary byte strings immediately.",
+    "consequences": "Good for structural induction; not a final choice of database key type. Native Nat values have a runtime limit.",
+    "question": "How does a practical key type affect comparison, serialization, and proof effort?"
+  },
+  {
+    "id": "006",
+    "title": "Make each state explicit",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "We want laws about the same functions we execute.",
+    "choice": "Use pure functions taking a Store and returning a Store.",
+    "alternatives": "Hide a mutable global store behind commands.",
+    "consequences": "Old states can be retained. This alone does not supply transactions or MVCC.",
+    "question": "What is the difference between retaining an old state and implementing a transaction?"
+  },
+  {
+    "id": "007",
+    "title": "Defer the rest of a lookup",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "Compiled Bend evaluates function arguments eagerly.",
+    "choice": "Pass the tail search as a closure, invoked only after a mismatch.",
+    "alternatives": "Pass the already-computed result of searching the tail.",
+    "consequences": "Lookup stops at the first matching key; closure syntax needs explanation.",
+    "question": "Why could an eager tail search do unnecessary work?"
+  },
+  {
+    "id": "008",
+    "title": "Keep tests and laws complementary",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "A few examples and a universal claim establish different things.",
+    "choice": "Run concrete cases on native and JS backends; recheck three laws with --verdict.",
+    "alternatives": "Rely solely on tests, or assume any proved law means the entire database is correct.",
+    "consequences": "Proof coverage is explicit. Other-key preservation is still an open universal law.",
+    "question": "Could a store discard unrelated keys and still satisfy read_after_put?"
+  },
+  {
+    "id": "009",
+    "title": "Keep the learning record beside the code",
+    "date": "2026-10-25",
+    "status": "Accepted for this milestone",
+    "context": "Explanations should evolve with the implementation.",
+    "choice": "Use db/ and learning/ in one repository; compile the real store into the website.",
+    "alternatives": "Keep separate repositories or implement a separate JavaScript demo.",
+    "consequences": "One source of operation behavior. Browser reflections export to files; they do not automatically sync to Git.",
+    "question": "Which insights should become a tracked design decision?"
+  }
+]

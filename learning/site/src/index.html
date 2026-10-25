@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Learn database design and proofs by building and exploring a real key-value store in Bend 2.">
+  <meta name="theme-color" content="#183e32">
+  <title>Bend DB — Learning notebook</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <aside class="sidebar">
+    <a class="brand" href="#overview" aria-label="Bend DB home"><span class="brand-mark">b<span>↳</span></span><span>Bend DB<small>A learning notebook</small></span></a>
+    <div class="sidebar-label">BUILD TO UNDERSTAND</div>
+    <nav aria-label="Learning notebook">
+      <a href="#overview" aria-current="page"><span>00</span> The starting point</a>
+      <a href="#lesson"><span>01</span> Read the first lesson</a>
+      <a href="#lab"><span>02</span> Explore the store</a>
+      <a href="#proofs"><span>03</span> Follow a proof</a>
+      <a href="#decisions"><span>04</span> Design decisions</a>
+      <a href="#notebook"><span>05</span> Your notebook</a>
+      <a href="#journal"><span>06</span> Project journal</a>
+    </nav>
+    <div class="sidebar-foot"><span class="dot"></span> MILESTONE 01<br><strong>In-memory key-value store</strong><p>Small steps. Runnable code.<br>Room for questions.</p><a href="https://github.com/LouisLotter/bend-db" target="_blank" rel="noreferrer">Open the repository ↗</a></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span>THE DATABASE WORKSHOP <i>/</i> <span id="breadcrumb">Starting point</span></span><a href="#notebook">Write something down <span aria-hidden="true">↗</span></a></header>
+    <main id="main" tabindex="-1">
+      <div id="load-error" class="callout danger" role="alert" hidden></div>
+      <section class="page" id="overview" aria-labelledby="overview-title">
+        <div class="eyebrow">A PROJECT FOR LEARNING, ONE DECISION AT A TIME</div>
+        <h1 id="overview-title">Understand the database.<br><em>Build it from the inside.</em></h1>
+        <p class="lead">A small database in Bend 2. A place to ask why it works.<br>We’ll connect the code, the design choices, and the proofs as we go.</p>
+        <div class="actions"><a class="button primary" href="#lesson">Begin with the first lesson <span>→</span></a><a class="text-link" href="#lab">Open the store explorer ↗</a></div>
+        <div class="workbench">
+          <div class="bench-heading"><span class="eyebrow">OUR FIRST USEFUL DISTINCTION</span><span class="mono">logical view ≠ physical history</span></div>
+          <div class="bench-grid"><div><h2>One visible value.</h2><p>Ask for key <code>7</code> and you get <strong>"plum"</strong>.</p><div class="logical-example"><span>KEY</span><span>VALUE</span><b>7</b><b>"plum"</b><b>9</b><b>"pear"</b></div></div>
+          <div class="history-example"><div class="history-caption">NEWEST FIRST <span>↓ LOOKUP STARTS HERE</span></div><div class="sample-entry selected"><span>7</span><strong>"plum"</strong><small>first match wins</small></div><div class="sample-entry"><span>9</span><strong>"pear"</strong></div><div class="sample-entry faded"><span>7</span><strong>"apple"</strong><small>older value is hidden</small></div><p>Three writes are still in memory. The logical map only shows the latest value for each key.</p></div></div>
+        </div>
+        <div class="section-heading"><h2>How we’ll learn</h2><span>No concepts marked mastered yet</span></div>
+        <div class="learning-path"><a href="#lesson"><span class="step-number">01 / READ</span><h3>State the contract.</h3><p>What should put, get, and delete mean? Choose the behavior before the data structure.</p><span class="arrow">→</span></a><a href="#lab"><span class="step-number">02 / EXPERIMENT</span><h3>Predict, then run.</h3><p>Write the same key twice. Delete it. See what changes and what stays in memory.</p><span class="arrow">→</span></a><a href="#proofs"><span class="step-number">03 / REASON</span><h3>Make one claim precise.</h3><p>Follow a proof that an empty store has no values, for every possible key.</p><span class="arrow">→</span></a></div>
+        <div class="reading-note"><span class="margin-label">ON THE DESK</span><p><em>Designing Data-Intensive Applications</em>, second edition.<br>This project is our practical companion. We’ll connect ideas as they come up; we aren’t assuming a particular chapter.</p></div>
+      </section>
+      <section class="page" id="lesson" aria-labelledby="lesson-title" hidden>
+        <div class="eyebrow">LESSON 01 · DATABASES + BEND</div><h1 id="lesson-title">A store small enough<br><em>to understand completely.</em></h1>
+        <p class="lead">Read in short passes. The contract and the history come first; the proof details can wait until the behavior feels familiar.</p>
+        <div class="article-layout"><article id="lesson-content" class="prose"><p>Loading the lesson…</p></article><aside class="margin-note"><span class="eyebrow">KEEP THIS QUESTION OPEN</span><p>What does the caller see, and what does the implementation keep?</p><a href="#lab">Try it in the explorer →</a><hr><p>New to proofs? Start with the empty-store law. You don’t need to understand induction on the first pass.</p><a href="#proofs">Walk through the proof →</a></aside></div>
+      </section>
+      <section class="page" id="lab" aria-labelledby="lab-title" hidden>
+        <div class="eyebrow">EXPERIMENT 01 · THE ACTUAL BEND IMPLEMENTATION</div><h1 id="lab-title">Follow the history.</h1><p class="lead">Make a prediction. Run an operation. Compare what is visible with what is still stored.</p>
+        <div class="callout"><strong>Try this:</strong> delete key 7. Does "apple" come back? Then write an empty value. Is that the same as missing?</div>
+        <form id="operation-form" class="operation-form"><label>Key <span class="field-hint">natural number</span><input id="key" type="text" inputmode="numeric" pattern="[0-9]+" value="7" required autocomplete="off"></label><label class="value-field">Value <span class="field-hint">empty text is allowed</span><input id="value" type="text" value="cherry" maxlength="500" autocomplete="off"></label><div class="operation-buttons"><button class="primary" type="submit">put</button><button type="button" id="get-button">get</button><button type="button" id="delete-button">delete</button></div></form>
+        <p class="micro">Explorer limits: keys 0–1,000,000; 200 history entries; 500 characters per value. These are UI limits, not the database contract.</p>
+        <div id="operation-result" class="result" role="status" aria-live="polite"></div>
+        <div class="lab-toolbar"><span id="counts" class="mono"></span><div><button id="pin-button" class="small">Pin current state</button><button id="sample-button" class="small">Load example</button><button id="reset-button" class="small">Start empty</button></div></div>
+        <div class="lab-grid"><div class="lab-pane"><div class="pane-title"><h2>Physical history</h2><span>NEWEST → OLDEST</span></div><p class="micro">The highlight traces the current lookup through the representation.</p><div id="physical-history"></div></div><div class="lab-pane"><div class="pane-title"><h2>Logical view</h2><span>WHAT GET SEES</span></div><div id="logical-view"></div><div class="snapshot"><span class="eyebrow">RETAIN AN OLD STATE</span><p id="snapshot-result">Pin a state, then write or delete a key. Compare the old result with the current one.</p></div></div></div>
+        <details class="details"><summary>What is actually running?</summary><p>The build compiles <code>db/store.bend</code> to an ES module. The buttons call its <code>empty</code>, <code>put</code>, <code>get</code>, and <code>delete</code> functions. JavaScript draws the representation trace and logical view. The three database laws do not verify this UI or the compiler.</p><p>The store resets when this page reloads. Pinning retains a value in this page’s memory; it does not save data to disk or implement a transaction.</p></details>
+      </section>
+      <section class="page" id="proofs" aria-labelledby="proofs-title" hidden>
+        <div class="eyebrow">PROOF 01 · NO PROOF BACKGROUND REQUIRED</div><h1 id="proofs-title">Every key.<br><em>One small argument.</em></h1><p class="lead">A test asks about an example. A law tells us exactly what must hold for every input it names.</p>
+        <div class="proof-law"><span class="eyebrow">THE CLAIM, IN PLAIN LANGUAGE</span><h2>Looking up any key in an empty store returns missing.</h2><pre><code>law empty_is_missing:
+  for key: Nat
+  {KV.get(KV.empty(), key) == None{} : Maybe&lt;&amp;2, String&gt;}</code></pre><p><code>for key: Nat</code> means every natural-number key. Here, <code>==</code> is an equality proposition to prove, not a Boolean test.</p></div>
+        <div class="proof-controls" role="group" aria-label="Proof steps"><button data-proof-step="0" aria-pressed="true">1. The goal</button><button data-proof-step="1" aria-pressed="false">2. Expand empty</button><button data-proof-step="2" aria-pressed="false">3. Evaluate get</button><button data-proof-step="3" aria-pressed="false">4. Reflexivity</button></div>
+        <div class="proof-step" aria-live="polite"><span id="proof-step-label" class="eyebrow"></span><pre id="proof-expression"></pre><p id="proof-explanation"></p></div>
+        <div class="section-heading"><h2>What we have established</h2><span>Verification record · 25 Oct 2026</span></div>
+        <div class="coverage"><div><span class="status-label">KERNEL-CHECKED LAWS</span><h3>Three universal claims</h3><ul><li>Every key is missing from an empty store.</li><li>Any value can be read immediately after writing it.</li><li>Any key is missing immediately after deleting it.</li></ul><p><code>bend PROOF.bend --verdict</code> checks the translated definitions and proofs with BendTT’s Lean-built kernel.</p></div><div><span class="status-label amber">STILL OPEN</span><h3>A specification can be incomplete</h3><p>Could a put discard all unrelated keys and still satisfy “read after put”? <strong>Yes.</strong> We still need a law saying that writing one key preserves every different key.</p><p>Sixteen concrete cases pass on both native and JavaScript backends. Examples exercise the implementation; they do not replace that missing universal claim.</p></div></div>
+        <details class="details"><summary>Next proof: why a key equals itself</summary><p>The write and delete proofs use <code>Nat.is_eq(key, key) == True{}</code>. The helper proves it by induction: zero equals zero; comparing successors reduces to comparing their predecessors. The recursive proof handles the smaller predecessor.</p><p>The actual helper states the equality in the opposite direction, <code>True{} == Nat.is_eq(key, key)</code>, to fit Bend’s rewrite syntax. Rewriting replaces the comparison with <code>True</code>, so the first entry wins and reflexivity finishes.</p><pre><code id="proof-source"></code></pre></details>
+        <p class="boundary-note">These laws do not prove durability, complexity, concurrency, the native compiler, the translation to BendTT, or the whole application. Read the exact claims alongside the code.</p>
+      </section>
+      <section class="page" id="decisions" aria-labelledby="decisions-title" hidden>
+        <div class="eyebrow">DESIGN LOG · REASONS WORTH KEEPING</div><h1 id="decisions-title">Remember <em>why.</em></h1><p class="lead">Every choice buys something and gives something up. These decisions describe this milestone; we can revisit them when the problem changes.</p>
+        <div class="decision-tools"><label for="decision-filter">Find a decision<input id="decision-filter" type="search" placeholder="Try tombstone, proof, or keys…"></label><a class="button" href="#notebook">Draft a new decision →</a></div><p id="decision-count" class="micro" role="status"></p><div id="decisions-list"></div>
+      </section>
+      <section class="page" id="notebook" aria-labelledby="notebook-title" hidden>
+        <div class="eyebrow">YOUR NOTEBOOK · PREDICTIONS, QUESTIONS, DECISIONS</div><h1 id="notebook-title">Make the understanding<br><em>your own.</em></h1><p class="lead">Write what you think will happen. Then record what surprised you, or a decision you want us to examine.</p>
+        <div class="callout"><strong>Saved in this browser.</strong> Notes and drafts use local storage for this site. They do not sync to GitHub or other devices. Export a backup before clearing browser data. Reviewed notes can become entries in <code>learning/JOURNAL.md</code> or the design log.</div>
+        <div class="notebook-grid"><form id="note-form"><label>Kind<select id="note-kind"><option value="Reflection">Reflection</option><option value="Question">Question</option><option value="Design decision">Design decision</option></select></label><label>Title<input id="note-title" maxlength="160" required placeholder="Why doesn’t deleting 7 bring back apple?"></label><label>Notes<textarea id="note-body" rows="10" maxlength="20000" required placeholder="My prediction…&#10;What I observed…&#10;What I can now explain…&#10;What is still unclear…"></textarea></label><p id="note-hint" class="micro">Being unsure is useful information. We won’t mark concepts understood for you.</p><button type="submit" class="primary">Save entry</button><p id="note-status" class="micro" role="status" aria-live="polite"></p></form><aside class="notebook-prompts"><span class="eyebrow">A FEW GOOD STARTING POINTS</span><h3>Try explaining it without looking.</h3><ol><li>Why are an empty value and a missing key different?</li><li>What does a tombstone prevent?</li><li>Why is the empty-store proof valid for every key?</li><li>Which behavior do our current laws leave unspecified?</li></ol><p>A decision entry is strongest when it captures context, alternatives, the choice, and its consequences.</p></aside></div>
+        <div class="section-heading"><h2>Your entries <span id="note-count"></span></h2><div><button id="export-notes" class="small">Export Markdown</button><button id="export-backup" class="small">Export JSON</button><label class="button small import-label">Import JSON<input type="file" id="import-notes" accept="application/json,.json" hidden></label></div></div><div id="notes-list"></div>
+      </section>
+      <section class="page" id="journal" aria-labelledby="journal-title" hidden><div class="eyebrow">PROJECT JOURNAL · SHARED AND VERSIONED</div><h1 id="journal-title">What we’ve done.<br><em>What remains open.</em></h1><p class="lead">This is the tracked record from the repository. Your browser notebook stays separate until we review and add its insights here.</p><article id="journal-content" class="prose"></article></section>
+      <footer><span>BEND DB <span class="footer-dot">·</span> Learn by building, keep the reasons.</span><a href="https://github.com/LouisLotter/bend-db" target="_blank" rel="noreferrer">Source &amp; learning record ↗</a></footer>
+    </main>
+  </div>
+  <noscript><p>This explorer needs JavaScript. Read the full lesson at <a href="https://github.com/LouisLotter/bend-db/tree/main/learning">the learning repository</a>.</p></noscript>
+</body>
+</html>

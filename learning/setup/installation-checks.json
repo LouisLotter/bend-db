@@ -1,0 +1,101 @@
+{
+  "verified_on": "2026-10-25",
+  "repository": "https://github.com/bendlang/bend",
+  "checkout": "<upstream-checkout>",
+  "commit": "295e996574573e3a88827b1cf7045b437333c8f0",
+  "checkout_clean": true,
+  "compiler_version": "2.0.39",
+  "compiler_installation": "~/.bend",
+  "command": "~/.local/bin/bend",
+  "native_compiler": "clang 22.1.8",
+  "installation": "Official release installer; SHA-256 verified by installer",
+  "checks": [
+    {
+      "name": "installed compiler",
+      "command": [
+        "bend",
+        "version"
+      ],
+      "exit_code": 0,
+      "stdout": "bend 2.0.39"
+    },
+    {
+      "name": "native hello",
+      "command": [
+        "./build/hello"
+      ],
+      "exit_code": 0,
+      "stdout": "Hello from Bend 2!"
+    },
+    {
+      "name": "native parallel, one thread",
+      "command": [
+        "./build/parallel",
+        "+RTS",
+        "--threads",
+        "1",
+        "--gpu",
+        "off"
+      ],
+      "exit_code": 0,
+      "stdout": "1048576"
+    },
+    {
+      "name": "native parallel, sixteen threads",
+      "command": [
+        "./build/parallel",
+        "+RTS",
+        "--threads",
+        "16",
+        "--gpu",
+        "off"
+      ],
+      "exit_code": 0,
+      "stdout": "1048576"
+    },
+    {
+      "name": "proof checker",
+      "command": [
+        "bend",
+        "PROOF.bend"
+      ],
+      "exit_code": 0,
+      "stdout": "ALL PROOFS CHECK\nUse --verdict for mathematical validity."
+    },
+    {
+      "name": "false proof rejected",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "SOME PROOFS FAIL\nError:\n- expected : 0n\n- observed : 1n\nLocation: false_claim\n6 | def false_claim():\n7>|   {==}\n  |   ^^^^\n8 |"
+    },
+    {
+      "name": "Lean kernel proof recheck",
+      "command": [
+        "bend",
+        "PROOF.bend",
+        "--verdict"
+      ],
+      "cwd": "learning/playground",
+      "exit_code": 0,
+      "stdout": "ALL PROOFS CHECK"
+    }
+  ],
+  "not_configured_or_tested": [
+    "GPU/CUDA execution"
+  ],
+  "lean": {
+    "version": "4.34.0",
+    "manager": "Elan 4.2.4",
+    "toolchain": "leanprover/lean4:v4.34.0",
+    "default": true,
+    "installation": "~/.elan",
+    "commands_on_path": [
+      "elan",
+      "lean",
+      "leanc",
+      "lake"
+    ],
+    "bend_kernel_cache": "~/.bend/bendtt/e951a3ff12c837f2/bendtt",
+    "verified_on": "2026-10-25"
+  }
+}

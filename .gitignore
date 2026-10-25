@@ -1,0 +1,9 @@
+**/build/
+learning/site/dist/
+**/__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+learning/site/store-build.mjs
